@@ -727,13 +727,7 @@ st.markdown("""
 # Add a humanizing element - personal stories
 with st.expander("Community Stories"):
     st.markdown("""
-        > "During the 2021 heat wave, our senior center became a vital cooling resource for the neighborhood. Many elderly residents don't have AC and can't afford to run it all day when they do."
-        >
-        > — Community Center Director, High HVI Area
-        
-        > "The difference between the tree-lined streets in some neighborhoods and the concrete expanses in others isn't just about aesthetics—it's about survival during heat waves."
-        >
-        > — Urban Planner focusing on heat mitigation
+        Wait til I find some sources for personal stories or testimonials from NYC residents affected by heat vulnerability.
     """)
 
 
