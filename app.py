@@ -250,54 +250,124 @@ with st.sidebar.expander("What is Heat Vulnerability?"):
         Higher values indicate areas that need more resources during heat events.
     """)
 
-# Main content area
-col1, col2 = st.columns([3, 1])
-
-with col1:
-    if viz_type == "Choropleth Map" and nyc_geojson is not None:
-        # Create choropleth map
-        try:
-            # First attempt with standard property keys
-            feature_id_key = "properties.ZCTA5CE10"
-            # Check if we need to use a different property key based on the GeoJSON structure
-            if nyc_geojson and 'features' in nyc_geojson and len(nyc_geojson['features']) > 0:
-                first_feature = nyc_geojson['features'][0]
-                if 'properties' in first_feature:
-                    properties = first_feature['properties']
-                    # Check for different potential zipcode property names
-                    if 'postalCode' in properties:
-                        feature_id_key = "properties.postalCode"
-                    elif 'ZIPCODE' in properties:
-                        feature_id_key = "properties.ZIPCODE"
-                    elif 'ZIP' in properties:
-                        feature_id_key = "properties.ZIP"
-                    
-            fig = px.choropleth_mapbox(
-                filtered_df,
-                geojson=nyc_geojson,
-                locations='zipcode',
-                featureidkey=feature_id_key,
-                color='hvi',
-                color_continuous_scale=color_scale,
-                range_color=(1, int(df['hvi'].max() if 'hvi' in df.columns else 5)),
-                mapbox_style="carto-positron",
-                zoom=9.5,
-                center={"lat": 40.7128, "lon": -74.0060},
-                opacity=0.7,
-                labels={'hvi': 'Heat Vulnerability Index'},
-                hover_name='zipcode',
-                hover_data={
-                    'zipcode': True,
-                    'hvi': True
-                }
-            )
-        except Exception as e:
-            st.error(f"Error creating choropleth map: {e}")
-            # Fallback to simple scatter plot if choropleth fails
-            st.info("Falling back to scatter plot visualization.")
-            viz_type = "Scatter Plot with Zip Code Labels"
+# Main content area - Map section (full width)
+# Main content area - Map section (full width)
+if viz_type == "Choropleth Map" and nyc_geojson is not None:
+    # Create choropleth map
+    try:
+        # First attempt with standard property keys
+        feature_id_key = "properties.ZCTA5CE10"
+        # Check if we need to use a different property key based on the GeoJSON structure
+        if nyc_geojson and 'features' in nyc_geojson and len(nyc_geojson['features']) > 0:
+            first_feature = nyc_geojson['features'][0]
+            if 'properties' in first_feature:
+                properties = first_feature['properties']
+                # Check for different potential zipcode property names
+                if 'postalCode' in properties:
+                    feature_id_key = "properties.postalCode"
+                elif 'ZIPCODE' in properties:
+                    feature_id_key = "properties.ZIPCODE"
+                elif 'ZIP' in properties:
+                    feature_id_key = "properties.ZIP"
+                
+        fig = px.choropleth_mapbox(
+            filtered_df,
+            geojson=nyc_geojson,
+            locations='zipcode',
+            featureidkey=feature_id_key,
+            color='hvi',
+            color_continuous_scale=color_scale,
+            range_color=(1, int(df['hvi'].max() if 'hvi' in df.columns else 5)),
+            mapbox_style="carto-positron",
+            zoom=9.5,
+            center={"lat": 40.7128, "lon": -74.0060},
+            opacity=0.7,
+            labels={'hvi': 'Heat Vulnerability Index'},
+            hover_name='zipcode',
+            hover_data={
+                'zipcode': True,
+                'hvi': True
+            }
+        )
+    except Exception as e:
+        st.error(f"Error creating choropleth map: {e}")
+        # Fallback to simple scatter plot if choropleth fails
+        st.info("Falling back to scatter plot visualization.")
+        viz_type = "Scatter Plot with Zip Code Labels"
         
-        # Update layout
+    # Update layout
+    fig.update_layout(
+        margin={"r": 0, "t": 0, "l": 0, "b": 0},
+        coloraxis_colorbar={
+            'title': 'Heat Vulnerability Index',
+            'tickvals': [1, 2, 3, 4, 5],
+            'ticktext': ['1 (Low)', '2', '3', '4', '5 (High)']
+        },
+        height=600
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+elif viz_type == "Scatter Plot with Zip Code Labels" or (viz_type == "Choropleth Map" and nyc_geojson is None):
+    # Create scatter plot with zip codes
+    # If we're falling back due to GeoJSON issues, let the user know
+    if viz_type == "Choropleth Map" and nyc_geojson is None:
+        st.info("Using scatter plot as a fallback because GeoJSON data couldn't be loaded.")
+    
+    # In a real implementation, you'd join with actual NYC zip code centroid coordinates
+    if 'zipcode' in filtered_df.columns:
+        # Create a deterministic mapping of NYC zip codes to coordinates
+        # This ensures consistency across runs and avoids random placement
+        # Note: In a production app, you would load real centroid data for zip codes
+        
+        # Get unique zip codes from the dataset
+        all_zipcodes = filtered_df['zipcode'].unique()
+        
+        # Create a base dictionary of NYC zip codes to approximate coordinates
+        # These are approximated positions to create a rough map of NYC
+        # In a real app, you would use actual centroid data
+        
+        # Base coordinates around NYC
+        base_lat, base_lon = 40.7128, -74.0060
+        
+        # Create a grid-like pattern for zip codes
+        zip_coords = {}
+        grid_size = int(np.ceil(np.sqrt(len(all_zipcodes))))
+        
+        for i, zipcode in enumerate(all_zipcodes):
+            # Calculate grid position
+            row = i // grid_size
+            col = i % grid_size
+            
+            # Calculate coordinates based on grid position
+            # This creates a grid-like pattern centered around NYC
+            lat = base_lat + (row - grid_size/2) * 0.01
+            lon = base_lon + (col - grid_size/2) * 0.01
+            
+            zip_coords[zipcode] = (lat, lon)
+        
+        # Apply coordinates to the dataframe
+        filtered_df['lat'] = filtered_df['zipcode'].map(lambda z: zip_coords.get(z, (base_lat, base_lon))[0])
+        filtered_df['lon'] = filtered_df['zipcode'].map(lambda z: zip_coords.get(z, (base_lat, base_lon))[1])
+        
+        fig = px.scatter_mapbox(
+            filtered_df,
+            lat='lat',
+            lon='lon',
+            color='hvi',
+            color_continuous_scale=color_scale,
+            range_color=(1, int(df['hvi'].max() if 'hvi' in df.columns else 5)),
+            size_max=15,
+            zoom=10,
+            mapbox_style="carto-positron",
+            text='zipcode',
+            hover_name='zipcode',
+            hover_data={
+                'zipcode': True,
+                'hvi': True
+            }
+        )
+        
         fig.update_layout(
             margin={"r": 0, "t": 0, "l": 0, "b": 0},
             coloraxis_colorbar={
@@ -309,183 +379,112 @@ with col1:
         )
         
         st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.error("Zip code data is not available.")
         
-    elif viz_type == "Scatter Plot with Zip Code Labels" or (viz_type == "Choropleth Map" and nyc_geojson is None):
-        # Create scatter plot with zip codes
-        # If we're falling back due to GeoJSON issues, let the user know
-        if viz_type == "Choropleth Map" and nyc_geojson is None:
-            st.info("Using scatter plot as a fallback because GeoJSON data couldn't be loaded.")
+elif viz_type == "Heat Map":
+    # Create a heat map
+    # This requires creating a grid over NYC and aggregating data
+    # For simplicity, we'll use the scatter plot with a density heatmap
+    if 'zipcode' in filtered_df.columns:
+        # Assign random coordinates within NYC for demonstration
+        # In a real implementation, you'd use actual centroid coordinates
+        np.random.seed(42)  # For reproducibility
+        filtered_df['lat'] = 40.7128 + np.random.normal(0, 0.05, size=len(filtered_df))
+        filtered_df['lon'] = -74.0060 + np.random.normal(0, 0.05, size=len(filtered_df))
         
-        # In a real implementation, you'd join with actual NYC zip code centroid coordinates
-        if 'zipcode' in filtered_df.columns:
-            # Create a deterministic mapping of NYC zip codes to coordinates
-            # This ensures consistency across runs and avoids random placement
-            # Note: In a production app, you would load real centroid data for zip codes
-            
-            # Get unique zip codes from the dataset
-            all_zipcodes = filtered_df['zipcode'].unique()
-            
-            # Create a base dictionary of NYC zip codes to approximate coordinates
-            # These are approximated positions to create a rough map of NYC
-            # In a real app, you would use actual centroid data
-            
-            # Base coordinates around NYC
-            base_lat, base_lon = 40.7128, -74.0060
-            
-            # Create a grid-like pattern for zip codes
-            zip_coords = {}
-            grid_size = int(np.ceil(np.sqrt(len(all_zipcodes))))
-            
-            for i, zipcode in enumerate(all_zipcodes):
-                # Calculate grid position
-                row = i // grid_size
-                col = i % grid_size
-                
-                # Calculate coordinates based on grid position
-                # This creates a grid-like pattern centered around NYC
-                lat = base_lat + (row - grid_size/2) * 0.01
-                lon = base_lon + (col - grid_size/2) * 0.01
-                
-                zip_coords[zipcode] = (lat, lon)
-            
-            # Apply coordinates to the dataframe
-            filtered_df['lat'] = filtered_df['zipcode'].map(lambda z: zip_coords.get(z, (base_lat, base_lon))[0])
-            filtered_df['lon'] = filtered_df['zipcode'].map(lambda z: zip_coords.get(z, (base_lat, base_lon))[1])
-            
-            fig = px.scatter_mapbox(
-                filtered_df,
-                lat='lat',
-                lon='lon',
-                color='hvi',
-                color_continuous_scale=color_scale,
-                range_color=(1, int(df['hvi'].max() if 'hvi' in df.columns else 5)),
-                size_max=15,
-                zoom=10,
-                mapbox_style="carto-positron",
-                text='zipcode',
-                hover_name='zipcode',
-                hover_data={
-                    'zipcode': True,
-                    'hvi': True
-                }
+        # Create the heatmap
+        fig = go.Figure(go.Densitymapbox(
+            lat=filtered_df['lat'],
+            lon=filtered_df['lon'],
+            z=filtered_df['hvi'],
+            radius=10,
+            colorscale=color_scale,
+            zmin=1,
+            zmax=int(df['hvi'].max() if 'hvi' in df.columns else 5),
+            showscale=True,
+            colorbar=dict(
+                title='Heat Vulnerability',
+                tickvals=[1, 2, 3, 4, 5],
+                ticktext=['1 (Low)', '2', '3', '4', '5 (High)']
             )
-            
-            fig.update_layout(
-                margin={"r": 0, "t": 0, "l": 0, "b": 0},
-                coloraxis_colorbar={
-                    'title': 'Heat Vulnerability Index',
-                    'tickvals': [1, 2, 3, 4, 5],
-                    'ticktext': ['1 (Low)', '2', '3', '4', '5 (High)']
-                },
-                height=600
-            )
-            
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.error("Zip code data is not available.")
-            
-    elif viz_type == "Heat Map":
-        # Create a heat map
-        # This requires creating a grid over NYC and aggregating data
-        # For simplicity, we'll use the scatter plot with a density heatmap
-        if 'zipcode' in filtered_df.columns:
-            # Assign random coordinates within NYC for demonstration
-            # In a real implementation, you'd use actual centroid coordinates
-            np.random.seed(42)  # For reproducibility
-            filtered_df['lat'] = 40.7128 + np.random.normal(0, 0.05, size=len(filtered_df))
-            filtered_df['lon'] = -74.0060 + np.random.normal(0, 0.05, size=len(filtered_df))
-            
-            # Create the heatmap
-            fig = go.Figure(go.Densitymapbox(
-                lat=filtered_df['lat'],
-                lon=filtered_df['lon'],
-                z=filtered_df['hvi'],
-                radius=10,
-                colorscale=color_scale,
-                zmin=1,
-                zmax=int(df['hvi'].max() if 'hvi' in df.columns else 5),
-                showscale=True,
-                colorbar=dict(
-                    title='Heat Vulnerability',
-                    tickvals=[1, 2, 3, 4, 5],
-                    ticktext=['1 (Low)', '2', '3', '4', '5 (High)']
-                )
-            ))
-            
-            fig.update_layout(
-                mapbox_style="carto-positron",
-                mapbox_center_lat=40.7128,
-                mapbox_center_lon=-74.0060,
-                mapbox_zoom=10,
-                margin={"r": 0, "t": 0, "l": 0, "b": 0},
-                height=600
-            )
-            
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.error("Heat map data is not available.")
+        ))
+        
+        fig.update_layout(
+            mapbox_style="carto-positron",
+            mapbox_center_lat=40.7128,
+            mapbox_center_lon=-74.0060,
+            mapbox_zoom=10,
+            margin={"r": 0, "t": 0, "l": 0, "b": 0},
+            height=600
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.error("Heat map data is not available.")
 
-    # Add context for the visualization
+# Add context for the visualization
+st.markdown("""
+    ### Understanding the Map
+    
+    This visualization shows the Heat Vulnerability Index (HVI) across NYC zip codes. 
+    The HVI ranges from 1 (low vulnerability) to 5 (high vulnerability).
+    
+    Areas with higher vulnerability (darker red) often coincide with neighborhoods that have:
+    - Less green space and more concrete
+    - Older buildings without adequate cooling
+    - Higher population density
+    - Limited access to cooling centers
+    - Higher percentages of vulnerable residents (elderly, children, those with medical conditions)
+""")
+
+# Add contextual information about heat stress impacts
+st.header("Impact of Heat Stress")
+
+st.markdown("""
+    ### Health Risks
+    
+    Extreme heat can lead to:
+    - Heat stroke
+    - Heat exhaustion
+    - Worsening of existing medical conditions
+    - Increased mortality rates
+    
+    ### Vulnerable Populations
+    
+    Those at highest risk include:
+    - Elderly residents
+    - Young children
+    - People with chronic illnesses
+    - Those without air conditioning
+    - Outdoor workers
+""")
+
+# Add action items
+st.markdown("""
+    ### Taking Action
+    
+    Communities can:
+    - Create cooling centers
+    - Plant trees and increase green spaces
+    - Implement cool roof programs
+    - Improve access to air conditioning
+    - Develop heat emergency response plans
+""")
+
+# Add a humanizing element - personal stories
+with st.expander("Community Stories"):
     st.markdown("""
-        ### Understanding the Map
+        > "During the 2021 heat wave, our senior center became a vital cooling resource for the neighborhood. Many elderly residents don't have AC and can't afford to run it all day when they do."
+        >
+        > — Community Center Director, High HVI Area
         
-        This visualization shows the Heat Vulnerability Index (HVI) across NYC zip codes. 
-        The HVI ranges from 1 (low vulnerability) to 5 (high vulnerability).
-        
-        Areas with higher vulnerability (darker red) often coincide with neighborhoods that have:
-        - Less green space and more concrete
-        - Older buildings without adequate cooling
-        - Higher population density
-        - Limited access to cooling centers
-        - Higher percentages of vulnerable residents (elderly, children, those with medical conditions)
+        > "The difference between the tree-lined streets in some neighborhoods and the concrete expanses in others isn't just about aesthetics—it's about survival during heat waves."
+        >
+        > — Urban Planner focusing on heat mitigation
     """)
 
-with col2:
-    # Add contextual information about heat stress impacts
-    st.header("Impact of Heat Stress")
-    
-    st.markdown("""
-        ### Health Risks
-        
-        Extreme heat can lead to:
-        - Heat stroke
-        - Heat exhaustion
-        - Worsening of existing medical conditions
-        - Increased mortality rates
-        
-        ### Vulnerable Populations
-        
-        Those at highest risk include:
-        - Elderly residents
-        - Young children
-        - People with chronic illnesses
-        - Those without air conditioning
-        - Outdoor workers
-    """)
-    
-    # Add action items
-    st.markdown("""
-        ### Taking Action
-        
-        Communities can:
-        - Create cooling centers
-        - Plant trees and increase green spaces
-        - Implement cool roof programs
-        - Improve access to air conditioning
-        - Develop heat emergency response plans
-    """)
-    
-    # Add a humanizing element - personal stories
-    with st.expander("Community Stories"):
-        st.markdown("""
-            > "During the 2021 heat wave, our senior center became a vital cooling resource for the neighborhood. Many elderly residents don't have AC and can't afford to run it all day when they do."
-            >
-            > — Community Center Director, High HVI Area
-            
-            > "The difference between the tree-lined streets in some neighborhoods and the concrete expanses in others isn't just about aesthetics—it's about survival during heat waves."
-            >
-            > — Urban Planner focusing on heat mitigation
-        """)
+
 
 # Data source and methodology
 st.markdown("---")
