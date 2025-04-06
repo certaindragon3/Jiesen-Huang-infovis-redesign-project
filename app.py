@@ -283,7 +283,6 @@ with st.sidebar.expander("What is Heat Vulnerability?"):
     """)
 
 # Main content area - Map section (full width)
-# Main content area - Map section (full width)
 if viz_type == "Choropleth Map" and nyc_geojson is not None:
     # Create choropleth map
     try:
@@ -339,80 +338,6 @@ if viz_type == "Choropleth Map" and nyc_geojson is not None:
     )
     
     st.plotly_chart(fig, use_container_width=True)
-    
-elif viz_type == "Scatter Plot with Zip Code Labels" or (viz_type == "Choropleth Map" and nyc_geojson is None):
-    # Create scatter plot with zip codes
-    # If we're falling back due to GeoJSON issues, let the user know
-    if viz_type == "Choropleth Map" and nyc_geojson is None:
-        st.info("Using scatter plot as a fallback because GeoJSON data couldn't be loaded.")
-    
-    # In a real implementation, you'd join with actual NYC zip code centroid coordinates
-    if 'zipcode' in filtered_df.columns:
-        # Create a deterministic mapping of NYC zip codes to coordinates
-        # This ensures consistency across runs and avoids random placement
-        # Note: In a production app, you would load real centroid data for zip codes
-        
-        # Get unique zip codes from the dataset
-        all_zipcodes = filtered_df['zipcode'].unique()
-        
-        # Create a base dictionary of NYC zip codes to approximate coordinates
-        # These are approximated positions to create a rough map of NYC
-        # In a real app, you would use actual centroid data
-        
-        # Base coordinates around NYC
-        base_lat, base_lon = 40.7128, -74.0060
-        
-        # Create a grid-like pattern for zip codes
-        zip_coords = {}
-        grid_size = int(np.ceil(np.sqrt(len(all_zipcodes))))
-        
-        for i, zipcode in enumerate(all_zipcodes):
-            # Calculate grid position
-            row = i // grid_size
-            col = i % grid_size
-            
-            # Calculate coordinates based on grid position
-            # This creates a grid-like pattern centered around NYC
-            lat = base_lat + (row - grid_size/2) * 0.01
-            lon = base_lon + (col - grid_size/2) * 0.01
-            
-            zip_coords[zipcode] = (lat, lon)
-        
-        # Apply coordinates to the dataframe
-        filtered_df['lat'] = filtered_df['zipcode'].map(lambda z: zip_coords.get(z, (base_lat, base_lon))[0])
-        filtered_df['lon'] = filtered_df['zipcode'].map(lambda z: zip_coords.get(z, (base_lat, base_lon))[1])
-        
-        fig = px.scatter_mapbox(
-            filtered_df,
-            lat='lat',
-            lon='lon',
-            color='hvi',
-            color_continuous_scale=color_scale,
-            range_color=(1, int(df['hvi'].max() if 'hvi' in df.columns else 5)),
-            size_max=15,
-            zoom=10,
-            mapbox_style="carto-positron",
-            text='zipcode',
-            hover_name='zipcode',
-            hover_data={
-                'zipcode': True,
-                'hvi': True
-            }
-        )
-        
-        fig.update_layout(
-            margin={"r": 0, "t": 0, "l": 0, "b": 0},
-            coloraxis_colorbar={
-                'title': 'Heat Vulnerability Index',
-                'tickvals': [1, 2, 3, 4, 5],
-                'ticktext': ['1 (Low)', '2', '3', '4', '5 (High)']
-            },
-            height=600
-        )
-        
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.error("Zip code data is not available.")
         
 elif viz_type == "Heat Map" or (viz_type == "Choropleth Map" and nyc_geojson is None):
     # Create a density heat map using actual NYC zip code locations
@@ -422,9 +347,6 @@ elif viz_type == "Heat Map" or (viz_type == "Choropleth Map" and nyc_geojson is 
             st.info("Using heat map as a fallback because GeoJSON data couldn't be loaded.")
         
         # Load NYC zip code centroids data
-        # Load NYC zip code centroids data
-        # This approach uses KDE (Kernel Density Estimation) which is more accurate
-        # for heat maps than just random points
         
         # Get centroids for NYC zip codes
         nyc_zip_centroids = {
