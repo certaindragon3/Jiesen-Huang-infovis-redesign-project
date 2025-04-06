@@ -239,7 +239,7 @@ filtered_df = df[(df['hvi'] >= vulnerability_filter[0]) & (df['hvi'] <= vulnerab
 # Visualization type
 viz_type = st.sidebar.radio(
     "Visualization Type",
-    ["Choropleth Map", "Scatter Plot with Zip Code Labels", "Heat Map"]
+    ["Choropleth Map", "Heat Map"]
 )
 
 # Color scale selection
@@ -414,9 +414,14 @@ elif viz_type == "Scatter Plot with Zip Code Labels" or (viz_type == "Choropleth
     else:
         st.error("Zip code data is not available.")
         
-elif viz_type == "Heat Map":
+elif viz_type == "Heat Map" or (viz_type == "Choropleth Map" and nyc_geojson is None):
     # Create a density heat map using actual NYC zip code locations
     if 'zipcode' in filtered_df.columns:
+        # Show notification if this is being used as a fallback
+        if viz_type == "Choropleth Map" and nyc_geojson is None:
+            st.info("Using heat map as a fallback because GeoJSON data couldn't be loaded.")
+        
+        # Load NYC zip code centroids data
         # Load NYC zip code centroids data
         # This approach uses KDE (Kernel Density Estimation) which is more accurate
         # for heat maps than just random points
