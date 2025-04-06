@@ -427,15 +427,19 @@ elif viz_type == "Heat Map":
 st.markdown("""
     ### Understanding the Map
     
-    This visualization shows the Heat Vulnerability Index (HVI) across NYC zip codes. 
-    The HVI ranges from 1 (low vulnerability) to 5 (high vulnerability).
+    This visualization shows the Heat Vulnerability Index (HVI) across NYC zip codes. The HVI shows neighborhoods 
+    whose residents are more at risk for dying during and immediately following extreme heat. Neighborhoods are 
+    scored from 1 (lowest risk) to 5 (highest risk).
     
-    Areas with higher vulnerability (darker red) often coincide with neighborhoods that have:
-    - Less green space and more concrete
-    - Older buildings without adequate cooling
-    - Higher population density
-    - Limited access to cooling centers
-    - Higher percentages of vulnerable residents (elderly, children, those with medical conditions)
+    The HVI uses a statistical model to summarize the most important social and environmental factors that 
+    contribute to neighborhood heat risk. The factors included in the HVI are:
+    - Surface temperature
+    - Green space (vegetative cover)
+    - Access to home air conditioning
+    - Percentage of residents who are low-income
+    - Percentage of residents who are non-Latinx Black
+    
+    Differences in these risk factors across neighborhoods are rooted in past and present racism, according to the NYC Department of Health and Mental Hygiene.
 """)
 
 # Add contextual information about heat stress impacts
@@ -449,27 +453,31 @@ st.markdown("""
     - Heat exhaustion
     - Worsening of existing medical conditions
     - Increased mortality rates
+    - Disproportionate impacts on vulnerable communities
     
     ### Vulnerable Populations
     
     Those at highest risk include:
-    - Elderly residents
-    - Young children
+    - Low-income residents
+    - Non-Latinx Black residents
+    - Elderly individuals
     - People with chronic illnesses
     - Those without air conditioning
-    - Outdoor workers
+    - Residents of neighborhoods with less green space
+    - Residents of areas with higher surface temperatures
 """)
 
 # Add action items
 st.markdown("""
     ### Taking Action
     
-    Communities can:
-    - Create cooling centers
-    - Plant trees and increase green spaces
-    - Implement cool roof programs
-    - Improve access to air conditioning
-    - Develop heat emergency response plans
+    Communities can reduce heat vulnerability through:
+    - Creating cooling centers in high-risk neighborhoods
+    - Increasing green space and tree canopy in areas with high surface temperatures
+    - Implementing cool roof programs in neighborhoods with older buildings
+    - Improving access to air conditioning for low-income residents
+    - Developing targeted heat emergency response plans for the most vulnerable communities
+    - Addressing social and economic inequities that contribute to disproportionate heat risk
 """)
 
 # Add a humanizing element - personal stories
@@ -489,11 +497,15 @@ with st.expander("Community Stories"):
 # Data source and methodology
 st.markdown("---")
 st.markdown("""
-    **Data Source:** Heat Vulnerability Index Rankings from NYC Department of Health, 2025.
+    **Data Source:** Heat Vulnerability Index Rankings from NYC Department of Health and Mental Hygiene (DOHMH), last updated September 19, 2024.
     
-    **Methodology:** The Heat Vulnerability Index combines social and environmental factors including surface temperature, 
-    green space, access to home air conditioning, percentage of residents who are low-income or non-white, 
-    and percentage of residents who are aged 65+ living alone.
+    **Methodology:** The Heat Vulnerability Index combines social and environmental factors by summing the following factors and assigning them into 5 groups (quintiles):
+    
+    - **Median Household Income** (American Community Survey 5-year estimate, 2016-2020)
+    - **Percent vegetative cover** (trees, shrubs or grass) (2017 LiDAR, NYC DOITT)
+    - **Percent of population reported as Non-Hispanic Black** on Census 2020
+    - **Average surface temperature** Fahrenheit from ECOSSTRESS thermal imaging, August 27, 2020
+    - **Percent of households reporting Air Conditioning access**, Housing and Vacancy Survey, 2017
 """)
 
 # Add the ability to download the filtered data
