@@ -117,102 +117,15 @@ def load_data():
 @st.cache_data
 def load_nyc_geojson():
     """
-    Attempt to load NYC GeoJSON from multiple sources and create a local copy.
-    This helps solve the loading issues since accessing GitHub can sometimes be unreliable.
+    Load NYC GeoJSON from local file.
     """
-    # Define a function to check if GeoJSON is valid
-    def is_valid_geojson(data):
-        try:
-            if not isinstance(data, dict):
-                return False
-            if "type" not in data or "features" not in data:
-                return False
-            if not isinstance(data["features"], list):
-                return False
-            return True
-        except:
-            return False
-    
-    # First, check if we already have a local copy from a previous run
-    local_path = os.path.join(tempfile.gettempdir(), "nyc_zipcodes.geojson")
-    if os.path.exists(local_path):
-        try:
-            with open(local_path, 'r') as f:
-                local_data = json.load(f)
-            if is_valid_geojson(local_data):
-                st.success("Using locally cached GeoJSON data")
-                return local_data
-        except Exception as e:
-            st.warning(f"Local GeoJSON exists but could not be loaded: {e}")
-    
-    # Use raw URL from the NYC Department of Health repository
-    # This is one of the most reliable sources for NYC zip code boundaries
-    main_url = "https://raw.githubusercontent.com/nycehs/NYC_geography/master/zipcode/nyc_zipcodes.geojson"
-    
-    # Fallback URLs if the main one fails
-    fallback_urls = [
-        "https://raw.githubusercontent.com/fedhere/PUI2015_EC/master/mam1612_EC/nyc-zip-code-tabulation-areas-polygons.geojson",
-        "https://raw.githubusercontent.com/OpenDataDE/State-zip-code-GeoJSON/master/ny_new_york_zip_codes_geo.min.json"
-    ]
-    
-    # Try the main URL first
     try:
-        st.info("Downloading GeoJSON from NYC Department of Health repository...")
-        response = requests.get(main_url)
-        if response.status_code == 200:
-            try:
-                geojson_data = json.loads(response.text)
-                if is_valid_geojson(geojson_data):
-                    # Save a local copy for future use
-                    try:
-                        with open(local_path, 'w') as f:
-                            json.dump(geojson_data, f)
-                        st.success("Successfully downloaded and cached GeoJSON")
-                    except Exception as save_error:
-                        st.warning(f"Could not save local copy: {save_error}")
-                    
-                    # Return the valid GeoJSON
-                    return geojson_data
-                else:
-                    st.warning("Main source returned invalid GeoJSON structure")
-            except json.JSONDecodeError:
-                st.warning("Main source returned invalid JSON")
-        else:
-            st.warning(f"Main source returned status code: {response.status_code}")
+        with open('GeoJSON.json', 'r') as f:
+            geojson_data = json.load(f)
+        return geojson_data
     except Exception as e:
-        st.warning(f"Error with main source: {e}")
-    
-    # If main URL fails, try the fallbacks
-    for i, url in enumerate(fallback_urls):
-        try:
-            st.info(f"Trying fallback source {i+1}...")
-            response = requests.get(url)
-            if response.status_code == 200:
-                try:
-                    geojson_data = json.loads(response.text)
-                    if is_valid_geojson(geojson_data):
-                        # Save a local copy for future use
-                        try:
-                            with open(local_path, 'w') as f:
-                                json.dump(geojson_data, f)
-                            st.success(f"Successfully downloaded and cached GeoJSON from fallback source {i+1}")
-                        except Exception as save_error:
-                            st.warning(f"Could not save local copy: {save_error}")
-                        
-                        # Return the valid GeoJSON
-                        return geojson_data
-                    else:
-                        st.warning(f"Fallback source {i+1} returned invalid GeoJSON structure")
-                except json.JSONDecodeError:
-                    st.warning(f"Fallback source {i+1} returned invalid JSON")
-            else:
-                st.warning(f"Fallback source {i+1} returned status code: {response.status_code}")
-        except Exception as e:
-            st.warning(f"Error with fallback source {i+1}: {e}")
-    
-    # If all sources fail, return None
-    st.error("All GeoJSON sources failed. Will use a scatter plot visualization instead.")
-    return None
+        st.error(f"Failed to load local GeoJSON file: {e}")
+        return None
 
 # Load data
 df = load_data()
@@ -264,12 +177,13 @@ if 'hvi' in df.columns:
         st.markdown(
             f"""<div class="stat-box">
                 <h3>{len(df[df['hvi'] >= 4])}</h3>
-                <p>High Risk Zip Codes</p>
+                <p>High Risk Zip</p>
             </div>""", 
             unsafe_allow_html=True
         )
 
 # Information about heat vulnerability
+st.sidebar.markdown("<br>", unsafe_allow_html=True)
 with st.sidebar.expander("What is Heat Vulnerability?"):
     st.markdown("""
         Heat vulnerability measures a community's risk from extreme heat events. Factors include:
@@ -347,186 +261,8 @@ elif viz_type == "Heat Map" or (viz_type == "Choropleth Map" and nyc_geojson is 
             st.info("Using heat map as a fallback because GeoJSON data couldn't be loaded.")
         
         # Load NYC zip code centroids data
-        
-        # Get centroids for NYC zip codes
-        nyc_zip_centroids = {
-            # Manhattan
-            "10001": (40.7503, -73.9950),
-            "10002": (40.7168, -73.9861),
-            "10003": (40.7340, -73.9903),
-            "10004": (40.7100, -74.0132),
-            "10005": (40.7047, -74.0076),
-            "10006": (40.7072, -74.0136),
-            "10007": (40.7135, -74.0089),
-            "10009": (40.7240, -73.9785),
-            "10010": (40.7399, -73.9829),
-            "10011": (40.7412, -73.9991),
-            "10012": (40.7251, -73.9973),
-            "10013": (40.7206, -74.0050),
-            "10014": (40.7344, -74.0042),
-            "10016": (40.7454, -73.9805),
-            "10017": (40.7522, -73.9724),
-            "10018": (40.7555, -73.9911),
-            "10019": (40.7625, -73.9859),
-            "10021": (40.7693, -73.9599),
-            "10022": (40.7584, -73.9668),
-            "10023": (40.7769, -73.9826),
-            "10024": (40.7863, -73.9761),
-            "10025": (40.7988, -73.9681),
-            "10026": (40.8014, -73.9540),
-            "10027": (40.8121, -73.9546),
-            "10028": (40.7764, -73.9546),
-            "10029": (40.7913, -73.9437),
-            "10030": (40.8185, -73.9420),
-            "10031": (40.8267, -73.9481),
-            "10032": (40.8381, -73.9422),
-            "10033": (40.8503, -73.9347),
-            "10034": (40.8679, -73.9240),
-            "10035": (40.7942, -73.9333),
-            "10036": (40.7603, -73.9957),
-            "10037": (40.8122, -73.9379),
-            "10038": (40.7092, -74.0027),
-            "10039": (40.8264, -73.9374),
-            "10040": (40.8605, -73.9275),
-            "10044": (40.7614, -73.9503),
-            "10065": (40.7636, -73.9617),
-            "10069": (40.7756, -73.9889),
-            "10075": (40.7737, -73.9574),
-            "10128": (40.7816, -73.9515),
-            "10280": (40.7075, -74.0162),
-            "10282": (40.7161, -74.0142),
-            # Brooklyn
-            "11201": (40.6986, -73.9902),
-            "11203": (40.6505, -73.9353),
-            "11204": (40.6183, -73.9926),
-            "11205": (40.6942, -73.9653),
-            "11206": (40.7028, -73.9423),
-            "11207": (40.6773, -73.8927),
-            "11208": (40.6709, -73.8730),
-            "11209": (40.6220, -74.0300),
-            "11210": (40.6341, -73.9462),
-            "11211": (40.7126, -73.9531),
-            "11212": (40.6629, -73.9143),
-            "11213": (40.6704, -73.9372),
-            "11214": (40.5988, -73.9896),
-            "11215": (40.6713, -73.9861),
-            "11216": (40.6810, -73.9442),
-            "11217": (40.6826, -73.9787),
-            "11218": (40.6432, -73.9784),
-            "11219": (40.6323, -73.9973),
-            "11220": (40.6361, -74.0153),
-            "11221": (40.6910, -73.9267),
-            "11222": (40.7294, -73.9514),
-            "11223": (40.5977, -73.9729),
-            "11224": (40.5781, -73.9891),
-            "11225": (40.6629, -73.9568),
-            "11226": (40.6464, -73.9574),
-            "11228": (40.6197, -74.0128),
-            "11229": (40.6013, -73.9547),
-            "11230": (40.6222, -73.9654),
-            "11231": (40.6796, -74.0048),
-            "11232": (40.6603, -74.0028),
-            "11233": (40.6780, -73.9188),
-            "11234": (40.6096, -73.9166),
-            "11235": (40.5831, -73.9446),
-            "11236": (40.6423, -73.9010),
-            "11237": (40.7051, -73.9222),
-            "11238": (40.6792, -73.9649),
-            "11239": (40.6493, -73.8801),
-            # Queens
-            "11101": (40.7476, -73.9397),
-            "11102": (40.7705, -73.9265),
-            "11103": (40.7636, -73.9151),
-            "11104": (40.7561, -73.9146),
-            "11105": (40.7785, -73.9037),
-            "11106": (40.7624, -73.9311),
-            "11201": (40.6986, -73.9902),
-            "11354": (40.7681, -73.8271),
-            "11355": (40.7508, -73.8230),
-            "11356": (40.7841, -73.8419),
-            "11357": (40.7851, -73.8083),
-            "11358": (40.7611, -73.8058),
-            "11360": (40.7804, -73.7807),
-            "11361": (40.7627, -73.7724),
-            "11362": (40.7681, -73.7372),
-            "11363": (40.7729, -73.7506),
-            "11364": (40.7365, -73.7495),
-            "11365": (40.7344, -73.7941),
-            "11366": (40.7268, -73.7977),
-            "11367": (40.7298, -73.8208),
-            "11368": (40.7472, -73.8519),
-            "11369": (40.7644, -73.8724),
-            "11370": (40.7730, -73.8921),
-            "11372": (40.7517, -73.8830),
-            "11373": (40.7397, -73.8780),
-            "11374": (40.7318, -73.8624),
-            "11375": (40.7235, -73.8458),
-            "11377": (40.7441, -73.9069),
-            "11378": (40.7262, -73.9055),
-            "11379": (40.7157, -73.8777),
-            "11385": (40.7037, -73.9016),
-            "11411": (40.6958, -73.7358),
-            "11412": (40.6930, -73.7558),
-            "11413": (40.6693, -73.7461),
-            "11414": (40.6606, -73.8448),
-            "11415": (40.7075, -73.8283),
-            "11416": (40.6858, -73.8505),
-            "11417": (40.6763, -73.8406),
-            "11418": (40.7005, -73.8377),
-            "11419": (40.6888, -73.8224),
-            "11420": (40.6730, -73.8173),
-            "11421": (40.6926, -73.8663),
-            "11422": (40.6557, -73.7343),
-            "11423": (40.7153, -73.7700),
-            "11426": (40.7361, -73.7232),
-            "11427": (40.7304, -73.7465),
-            "11428": (40.7211, -73.7461),
-            "11429": (40.7088, -73.7402),
-            "11432": (40.7156, -73.7953),
-            "11433": (40.6978, -73.7901),
-            "11434": (40.6715, -73.7777),
-            "11435": (40.7013, -73.8092),
-            "11436": (40.6744, -73.7984),
-            # Bronx
-            "10451": (40.8201, -73.9267),
-            "10452": (40.8355, -73.9221),
-            "10453": (40.8567, -73.9116),
-            "10454": (40.8049, -73.9142),
-            "10455": (40.8144, -73.9046),
-            "10456": (40.8295, -73.9042),
-            "10457": (40.8440, -73.8983),
-            "10458": (40.8614, -73.8889),
-            "10459": (40.8262, -73.8910),
-            "10460": (40.8388, -73.8805),
-            "10461": (40.8473, -73.8419),
-            "10462": (40.8434, -73.8560),
-            "10463": (40.8806, -73.9093),
-            "10464": (40.8524, -73.7948),
-            "10465": (40.8253, -73.8174),
-            "10466": (40.8899, -73.8439),
-            "10467": (40.8750, -73.8744),
-            "10468": (40.8703, -73.9004),
-            "10469": (40.8722, -73.8550),
-            "10470": (40.9031, -73.8750),
-            "10471": (40.9152, -73.9046),
-            "10472": (40.8297, -73.8696),
-            "10473": (40.8182, -73.8539),
-            "10474": (40.8103, -73.8850),
-            "10475": (40.8749, -73.8275),
-            # Staten Island
-            "10301": (40.6304, -74.0952),
-            "10302": (40.6266, -74.1316),
-            "10303": (40.6304, -74.1663),
-            "10304": (40.6304, -74.0872),
-            "10305": (40.6037, -74.0703),
-            "10306": (40.5739, -74.1260),
-            "10307": (40.5081, -74.2290),
-            "10308": (40.5464, -74.1610),
-            "10309": (40.5317, -74.2195),
-            "10310": (40.6347, -74.1216),
-            "10312": (40.5374, -74.1791),
-            "10314": (40.6062, -74.1699)
-        }
+        with open('nyc_zip_centroids.json', 'r') as f:
+            nyc_zip_centroids = json.load(f)
         
         # Function to get lat/long for a zipcode, with a default fallback to central Manhattan
         def get_zip_location(zipcode):
