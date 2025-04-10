@@ -39,14 +39,12 @@ These factors were selected based on research showing their strong association w
 
 ## Python Packages Used
 
-This application leverages several Python libraries for geospatial visualization:
+This application leverages several Python libraries:
 
 - **Streamlit**: Powers the interactive web application framework
 - **Plotly**: Creates interactive choropleth and heat maps
 - **Pandas**: Handles data processing and manipulation
-- **GeoPandas**: Processes geospatial data and works with GeoJSON files
 - **NumPy**: Supports numerical operations and data transformation
-- **Requests**: Retrieves GeoJSON data from online sources when needed
 
 ## Data Sources
 
@@ -77,12 +75,14 @@ For the heat map visualization, the application uses a database of NYC zip code 
 1. Clone this repository
 2. Install the required packages:
    ```
-   pip install streamlit pandas plotly numpy geopandas requests
+   pip install streamlit pandas plotly numpy
    ```
 3. Run the Streamlit application:
    ```
    streamlit run app.py
    ```
+
+You can also access the deployed web version at: https://certaindragon3-jiesen-huang-infovis-redesign-project-app-yglh1o.streamlit.app
 
 ## Future Improvements
 
