@@ -3,13 +3,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import json
-import requests
-from io import StringIO
 import numpy as np
-from PIL import Image
 import os
-import geopandas as gpd
-import tempfile
 import warnings
 
 # Suppress warnings
