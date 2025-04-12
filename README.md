@@ -63,7 +63,7 @@ For the heat map visualization, the application uses a database of NYC zip code 
 1. Clone this repository
 2. Install the required packages:
    ```
-   pip install streamlit pandas plotly numpy
+   pip install -r requirements.**txt**
    ```
 3. Run the Streamlit application:
    ```
