@@ -6,16 +6,6 @@ This interactive web application visualizes the Heat Vulnerability Index (HVI) a
 
 The Heat Vulnerability Index (HVI) shows neighborhoods whose residents are more at risk for dying during and immediately following extreme heat. It uses a statistical model to summarize important social and environmental factors that contribute to neighborhood heat risk. Neighborhoods are scored from 1 (lowest risk) to 5 (highest risk).
 
-## Purpose and Use Cases
-
-This tool serves multiple purposes:
-
-- **Public Health Planning**: Helps health officials identify priority areas for heat mitigation strategies
-- **Resource Allocation**: Guides the placement of cooling centers, tree planting, and other interventions
-- **Policy Development**: Supports evidence-based policy decisions around climate adaptation
-- **Community Advocacy**: Enables communities to advocate for needed resources
-- **Research**: Provides a platform for studying the relationship between heat risk and social/environmental factors
-
 ## Data Source and Methodology
 
 The Heat Vulnerability Index data is provided by the NYC Department of Health and Mental Hygiene (DOHMH). The index combines several key factors:
@@ -44,7 +34,7 @@ This application leverages several Python libraries:
 - **Streamlit**: Powers the interactive web application framework
 - **Plotly**: Creates interactive choropleth and heat maps
 - **Pandas**: Handles data processing and manipulation
-- **NumPy**: Supports numerical operations and data transformation
+- **NumPy**: Supports numerical operations and data transformation，to generate small random jitter around each zip code's centroid by sampling from a normal distribution, creating a more natural-looking heatmap.
 
 ## Data Sources
 
@@ -60,8 +50,6 @@ The application uses a locally copied GeoJSON file from the NYC Department of He
 
 Alternative GeoJSON sources (used as fallbacks if needed):
 - [NYC Open Data Portal](https://data.cityofnewyork.us/Health/Modified-Zip-Code-Tabulation-Areas-MODZCTA-/pri4-ifjk)
-- [GitHub - fedhere/PUI2015_EC](https://github.com/fedhere/PUI2015_EC/blob/master/mam1612_EC/nyc-zip-code-tabulation-areas-polygons.geojson)
-- [NYC Geography Repository](https://github.com/nycehs/NYC_geography)
 
 #### Zip Code Centroid Data
 For the heat map visualization, the application uses a database of NYC zip code centroids (geographical center points). These centroids were compiled from multiple sources:
