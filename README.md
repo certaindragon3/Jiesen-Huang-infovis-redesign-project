@@ -52,11 +52,9 @@ Alternative GeoJSON sources (used as fallbacks if needed):
 - [NYC Open Data Portal](https://data.cityofnewyork.us/Health/Modified-Zip-Code-Tabulation-Areas-MODZCTA-/pri4-ifjk)
 
 #### Zip Code Centroid Data
-For the heat map visualization, the application uses a database of NYC zip code centroids (geographical center points). These centroids were compiled from multiple sources:
+For the heat map visualization, the application uses a database of NYC zip code centroids (geographical center points). These centroids were compiled from:
 
-- US Census Bureau ZIP Code Tabulation Areas (ZCTAs)
-- NYC Department of City Planning
-- Calculated centroids from boundary polygons
+- [US Census Bureau ZIP Code Tabulation Areas (ZCTAs)](https://www.census.gov/programs-surveys/geography/technical-documentation/records-layout/2020-zcta-record-layout.html)
 
 ## Installation and Usage
 
