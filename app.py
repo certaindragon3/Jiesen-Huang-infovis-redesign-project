@@ -164,7 +164,7 @@ if 'hvi' in df.columns:
         st.markdown(
             f"""<div class="stat-box">
                 <h3>{int(df['hvi'].max())}</h3>
-                <p>Highest HVI<br>(=5)</p>
+                <p>Highest HVI<br>(HVI=5)</p>
             </div>""", 
             unsafe_allow_html=True
         )
@@ -172,7 +172,7 @@ if 'hvi' in df.columns:
         st.markdown(
             f"""<div class="stat-box">
                 <h3>{len(df[df['hvi'] >= 4])}</h3>
-                <p>High Risk Zip<br>(>=4)</p>
+                <p>High Risk Zip<br>(HVI≥4)</p>
             </div>""", 
             unsafe_allow_html=True
         )
