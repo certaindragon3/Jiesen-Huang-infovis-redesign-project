@@ -54,7 +54,7 @@ st.markdown("""
 # Title and introduction
 st.title("NYC Heat Vulnerability Index Visualization")
 st.markdown("""
-    This interactive map shows heat vulnerability across NYC zip codes. Areas in red indicate higher vulnerability 
+    This interactive map shows heat vulnerability across NYC zip codes. Areas in red (when color scale set in red) indicate higher vulnerability 
     to extreme heat events, which can have serious health impacts for residents, especially vulnerable populations.
 """)
 
@@ -164,7 +164,7 @@ if 'hvi' in df.columns:
         st.markdown(
             f"""<div class="stat-box">
                 <h3>{int(df['hvi'].max())}</h3>
-                <p>Highest HVI<br>(HVI=5)</p>
+                <p>Highest HVI<br>(HVI = 5)</p>
             </div>""", 
             unsafe_allow_html=True
         )
@@ -172,7 +172,7 @@ if 'hvi' in df.columns:
         st.markdown(
             f"""<div class="stat-box">
                 <h3>{len(df[df['hvi'] >= 4])}</h3>
-                <p>High Risk Zip<br>(HVI≥4)</p>
+                <p>High Risk Zip<br>(HVI ≥ 4)</p>
             </div>""", 
             unsafe_allow_html=True
         )
