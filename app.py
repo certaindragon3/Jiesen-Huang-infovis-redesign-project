@@ -52,11 +52,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title and introduction
-st.title("NYC Heat Vulnerability Index Visualization")
-st.markdown("""
-    This interactive map shows heat vulnerability across NYC zip codes. Areas in red (when color scale set in red) indicate higher vulnerability 
-    to extreme heat events, which can have serious health impacts for residents, especially vulnerable populations.
-""")
+st.markdown("## NYC Heat Vulnerability Index Map")
 
 # Load data
 @st.cache_data
@@ -340,47 +336,43 @@ st.markdown("""
 """)
 
 # Add contextual information about heat stress impacts
-st.header("Impact of Heat Stress")
 
 st.markdown("""
-    ### Health Risks
+    ### Impact of Heat Stress
+    #### Health Risks
     
     Extreme heat can lead to:
     - Heat stroke
     - Heat exhaustion
-    - Worsening of existing medical conditions
     - Increased mortality rates
     - Disproportionate impacts on vulnerable communities
     
-    ### Vulnerable Populations
+    #### Vulnerable Populations
     
     Those at highest risk include:
     - Low-income residents
-    - Non-Latinx Black residents
     - Elderly individuals
-    - People with chronic illnesses
     - Those without air conditioning
     - Residents of neighborhoods with less green space
-    - Residents of areas with higher surface temperatures
 """)
 
 # Add action items
 st.markdown("""
-    ### Taking Action
+    #### Taking Action
     
-    Communities can reduce heat vulnerability through:
+    Communities can reduce heat vulnerability throug
     - Creating cooling centers in high-risk neighborhoods
     - Increasing green space and tree canopy in areas with high surface temperatures
-    - Implementing cool roof programs in neighborhoods with older buildings
     - Improving access to air conditioning for low-income residents
     - Developing targeted heat emergency response plans for the most vulnerable communities
-    - Addressing social and economic inequities that contribute to disproportionate heat risk
 """)
 
 # Add a humanizing element - personal stories
 with st.expander("Community Stories"):
     st.markdown("""
-        Wait til I find some sources for personal stories or testimonials from NYC residents affected by heat vulnerability.
+**Harlem**: Samantha Irvin's worry creases her brow each scorching summer day as she frantically checks on her elderly mother and godmother in Harlem, her mind haunted by thoughts of other seniors suffering alone in sweltering apartments they can't afford to cool, especially as budget cuts have significantly reduced funding to senior centers that serve as cooling centers. [learn more](https://council.nyc.gov/shaun-abreu/2024/07/15/columbia-spectator-community-advocates-raise-concerns-over-extreme-summer-heat-in-west-harlem-as-city-budget-cuts-affect-cooling-centers/)
+
+**Hunts Point**: Ajohntae Dixon's asthma attack during a blistering Hunts Point heatwave illustrates the painful consequences of decades of environmental neglect in a neighborhood the city has traditionally understood as "an industrial area in nature" with "no prioritization of street trees or any sort of mitigation to be able to bring down the temperatures in the community". [learn more](https://grist.org/article/heat-check/)
     """)
 
 
