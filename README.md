@@ -78,6 +78,12 @@ You can also access the deployed web version at: https://certaindragon3-jiesen-h
 - Implement address search functionality
 - Include links to heat-related resources by neighborhood
 
+## Ackanowledgments
+- This project has benefitted from the conversations at the Digital Technology for Sustainability Symposium at Duke Kunshan University on April 18. We especially thank Dongping Liu for his insights that helped improve the work, and the conference organizers Prof. Luyao Zhang for making the symposium happen.
+- Special thanks to the NYC Department of Health and Mental Hygiene for providing the data and resources to make this project possible.
+- Thanks to the NYC Open Data team for their support in accessing and utilizing the data.
+- Thanks to the developers of Streamlit, Plotly, Pandas, and NumPy for their excellent libraries that made this project possible.
+
 ## References
 
 - NYC Department of Health and Mental Hygiene. (2024). Heat Vulnerability Index Rankings. NYC Open Data.
