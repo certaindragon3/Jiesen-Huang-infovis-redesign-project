@@ -34,7 +34,7 @@ This application leverages several Python libraries:
 - **Streamlit**: Powers the interactive web application framework
 - **Plotly**: Creates interactive choropleth and heat maps
 - **Pandas**: Handles data processing and manipulation
-- **NumPy**: Supports numerical operations and data transformation，to generate small random jitter around each zip code's centroid by sampling from a normal distribution, creating a more natural-looking heatmap.
+- **NumPy**: Supports numerical operations and data transformation, generating small random jitter around each zip code's centroid to create a natural-looking heatmap
 
 ## Data Sources
 
@@ -78,11 +78,16 @@ You can also access the deployed web version at: https://certaindragon3-jiesen-h
 - Implement address search functionality
 - Include links to heat-related resources by neighborhood
 
-## Ackanowledgments
-- This project has benefitted from the conversations at the Digital Technology for Sustainability Symposium at Duke Kunshan University on April 18. We especially thank Dongping Liu for his insights that helped improve the work, and the conference organizers Prof. Luyao Zhang for making the symposium happen.
-- Special thanks to the NYC Department of Health and Mental Hygiene for providing the data and resources to make this project possible.
-- Thanks to the NYC Open Data team for their support in accessing and utilizing the data.
-- Thanks to the developers of Streamlit, Plotly, Pandas, and NumPy for their excellent libraries that made this project possible.
+## Acknowledgments
+
+I would like to thank several contributors and organizations whose insights and resources significantly enhanced this project:
+
+- **Dongping Liu**: Provided critical insights during the Digital Technology for Sustainability Symposium at Duke Kunshan University, significantly improving the project's technical approach.
+- **Prof. Luyao Zhang**: Facilitated the symposium and offered valuable academic perspectives that guided my understanding and approach.
+- **NYC Department of Health and Mental Hygiene**: Provided essential data and resources, making this visualization possible.
+- **NYC Open Data Team**: Supported access and utilization of critical datasets.
+- **Streamlit, Plotly, Pandas, and NumPy Developers**: Their excellent libraries made the development of this application feasible and efficient.
+- **Classmates and Symposium Participants**: Their collaborative feedback, questions, and discussions greatly enriched the project.
 
 ## References
 
@@ -93,3 +98,4 @@ You can also access the deployed web version at: https://certaindragon3-jiesen-h
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
