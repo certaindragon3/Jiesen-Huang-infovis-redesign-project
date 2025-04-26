@@ -13,13 +13,13 @@ This project contributes to the United Nations Sustainable Development Goals (SD
 SDG 11: Sustainable Cities and Communities: By visualizing heat vulnerability at a local level, this tool helps urban planners and communities identify areas needing climate adaptation measures (like cooling centers and green spaces) to build more resilient cities.
 
 <div style="text-align: center;">
-  <img src="https://commons.wikimedia.org/wiki/File:Sustainable_Development_Goal_11.png"  style="width: 25%; display: inline-block; vertical-align: middle;">
+  <img src="./SDG_Logo/E_WEB_11.png"  style="width: 25%; display: inline-block; vertical-align: middle;">
 </div>
 
 SDG 3: Good Health and Well-being: The visualization highlights populations and areas most vulnerable to heat-related health risks, supporting targeted public health interventions to protect residents and improve well-being during extreme heat events.
 
 <div style="text-align: center;">
-  <img src="https://commons.wikimedia.org/wiki/File:Sustainable_Development_Goal_3.png"  style="width: 25%; display: inline-block; vertical-align: middle;">
+  <img src="./SDG_Logo/E_WEB_11.png"  style="width: 25%; display: inline-block; vertical-align: middle;">
 </div>
 
 Through better data visualization and accessibility, this project supports efforts to create healthier, safer, and more sustainable urban environments.
