@@ -6,6 +6,20 @@ This interactive web application visualizes the Heat Vulnerability Index (HVI) a
 
 The Heat Vulnerability Index (HVI) shows neighborhoods whose residents are more at risk for dying during and immediately following extreme heat. It uses a statistical model to summarize important social and environmental factors that contribute to neighborhood heat risk. Neighborhoods are scored from 1 (lowest risk) to 5 (highest risk).
 
+## Contribution to Sustainable Development Goals (SDGs)
+
+This project contributes to the United Nations Sustainable Development Goals (SDGs) by addressing urban climate resilience and public health:
+
+SDG 11: Sustainable Cities and Communities: By visualizing heat vulnerability at a local level, this tool helps urban planners and communities identify areas needing climate adaptation measures (like cooling centers and green spaces) to build more resilient cities.
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Sustainable_Development_Goal_11SustainableCities.svg" width="100"/>
+
+SDG 3: Good Health and Well-being: The visualization highlights populations and areas most vulnerable to heat-related health risks, supporting targeted public health interventions to protect residents and improve well-being during extreme heat events.
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Sustainable_Development_Goal_03GoodHealth.svg" width="100"/>
+
+Through better data visualization and accessibility, this project supports efforts to create healthier, safer, and more sustainable urban environments.
+
 ## Data Source and Methodology
 
 The Heat Vulnerability Index data is provided by the NYC Department of Health and Mental Hygiene (DOHMH). The index combines several key factors:
